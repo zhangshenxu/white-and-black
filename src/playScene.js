@@ -38,7 +38,7 @@ var PlayLayer = cc.Layer.extend({
     this.addChild(this._scoreLabel, 10);
 
     // 添加初始黑白块
-    for(var i = 0; i < this._row + 1 ; i++){
+    for(var i = 0; i < this._row + 2 ; i++){
       this._tiles[i] = new Array();
       var num = Math.floor(Math.random() * this._col);
       for(var j = 0; j < this._col; j++){
@@ -64,6 +64,17 @@ var PlayLayer = cc.Layer.extend({
         }
       }
     }
+    // 初始化开始图标
+    var startLabel = new cc.LabelTTF('开始', 'Arial', 64);
+    startLabel.setPosition(this._tileSize.width / 2, this._tileSize.height /2);
+    startLabel.setColor(cc.color.WHITE);
+    for(var i = 0; i < this._col; i++){
+      if(this._tiles[1][i]._type == TileType.TOUCH){
+        this._tiles[1][i].addChild(startLabel,100);
+        return;
+      }
+    }
+
   },
   createTileSprite: function(x, y, type) {
     var tile = new TileSprite(this._tileSize, this.onTileCallBack);
@@ -74,9 +85,7 @@ var PlayLayer = cc.Layer.extend({
   onTileCallBack: function(isGameOver){
     var self = this.parent.parent;
     if(isGameOver){
-      //cc.log(new GameoverScene());
-      cc.director.runScene(new GameoverScene());
-      //cc.director.runScene(new PlayScene());
+      self.gameOver();
     }
     else{
       if(!self._isMoveing){
@@ -122,27 +131,55 @@ var PlayLayer = cc.Layer.extend({
     this._tileLayer.runAction(action);
     this._speed++;
 
+    // 判断最下面的没有按过的黑块的位置，判断gameover
     var lastLineTiles = this._tiles[this._count+1];
     for (var i = 0; i < this._col ; i++) {
       if(lastLineTiles[i]._type == TileType.TOUCH){
         var y = lastLineTiles[i].parent.convertToWorldSpace(lastLineTiles[i].getPosition());
-        //cc.log(y.y);
         if(!lastLineTiles[i]._isTouched && y.y < - this._tileSize.height / 2){
-          //game over
-          cc.log('game over');
-          cc.director.runScene(new GameoverScene());
+          this.unscheduleUpdate();
+          this.gameOver();
+/*          // TODO 特效
+          var self = this;
+          var callFun = cc.callFunc(function(){
+            self.gameOver();
+          });
+
+          var blinkAction = cc.blink(0.6, 4);
+          var popAction = cc.moveBy(1, cc.p(0, 2 * (this._tileSize.height + 1)));
+
+
+          var subTile = new cc.Sprite();
+          lastLineTiles[i].addChild(subTile);
+          subTile.setPosition(this.width / 2, this.height / 2);
+          subTile.setTextureRect(cc.rect(0, 0, this.width, this.height));
+          subTile.color = cc.color.GRAY;
+          subTile.runAction(blinkAction);
+
+          
+          var deadAction = cc.sequence(popAction, callFun);
+          this._tileLayer.runAction(deadAction);*/
+         
+
+
+
         }
       }
     };
+  },
+  gameOver: function(){
+    var scene = new GameoverScene(this._score);
+    var transitionScene = new cc.TransitionSlideInR(0.5, scene);
+    cc.director.runScene(transitionScene);
   }
 });
 
 var PlayScene = cc.Scene.extend({
   onEnter: function() {
-    cc.log('aa');
     this._super();
     var layer = new PlayLayer();
     this.addChild(layer);
   }
 });
+
 
