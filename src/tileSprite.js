@@ -1,14 +1,14 @@
 var TileType = {};
-TileType.START_LINE = 0;
-TileType.TOUCH      = 1;
-TileType.DONT_TOUCH = 2;
+TileType.START_LINE = 0; // 起始块
+TileType.TOUCH      = 1; // 黑块
+TileType.DONT_TOUCH = 2; // 白块
 
 
 var TileSprite = cc.Sprite.extend({
   _type: TileType.DONT_TOUCH,
-  //_touchListener: null,
   _callBackFunc: null,
   _isTouched: false,
+
   ctor: function(size, callBackFunc) {
     this._super();
     this.loadInit(size, callBackFunc);
@@ -16,7 +16,6 @@ var TileSprite = cc.Sprite.extend({
   },
   loadInit: function(size, callBackFunc) {
     this._callBackFunc = callBackFunc;
-
     this.setTextureRect(cc.rect(0, 0, size.width, size.height));
     this.setColor(cc.color.WHITE); 
   },
@@ -61,32 +60,34 @@ var TileSprite = cc.Sprite.extend({
     cc.eventManager.removeListeners(cc.EventListener.TOUCH_ONE_BY_ONE);
     var target = event.getCurrentTarget();
     target.onTouchDispose();
-    cc.log('removeListeners');
+    //cc.log('removeListeners');
   },
   onTouchDispose: function() {
-    cc.log('begin to deal with touch event');
+    //cc.log('begin to deal with touch event');
     var self = this;
     var callFun = cc.callFunc(function(){
       var isGameOver = self._type == TileType.DONT_TOUCH ? true : false;
-      //cc.log(isGameOver);
       (self._callBackFunc && typeof(self._callBackFunc) === "function") && self._callBackFunc(isGameOver);
     });
     if(this._type == TileType.DONT_TOUCH){
       var isGameOver = true;
-      var touchAction = cc.sequence(cc.blink(0.4, 4), callFun);
-
+      var touchAction = cc.sequence(cc.blink(0.6, 4), callFun);
       var subTile = new cc.Sprite();
       this.addChild(subTile);
       subTile.setPosition(this.width / 2, this.height / 2);
       subTile.setTextureRect(cc.rect(0, 0, this.width, this.height));
-      subTile.color = cc.color.RED;
+      subTile.color = cc.color('#f05654');
       subTile.runAction(touchAction);
 
       var unschedule = this.parent.parent;
-      //cc.log(aa);
       unschedule.unscheduleUpdate();
     }
     else{
+      //var subTile = new cc.Sprite();
+      //this.addChild(subTile);
+      //subTile.setPosition(this.width / 2, this.height / 2);
+      //subTile.setTextureRect(cc.rect(0, 0, this.width, this.height));
+      //subTile.color = cc.color.GRAY;
       this.color = cc.color.GRAY;
       this._isTouched = true;
       var isGameOver = false;

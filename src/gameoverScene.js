@@ -1,22 +1,31 @@
 var GameoverLayer = cc.Layer.extend({
   _scoreLabel: null,
-  ctor: function() {
+  _score: 0,
+  ctor: function(score) {
     this._super();
+    this._score = score;
     var size = cc.winSize;
 
-    this.bgSprite = new cc.Sprite(res.BackGround_png);
-    this.bgSprite.attr({
-      x: size.width / 2,
-      y: size.height / 2,
-    });
-    this.addChild(this.bgSprite, 0);
+    var bg = new cc.LayerColor(cc.color('#f05654'));
+    this.addChild(bg, 0);
 
-    this._scoreLabel = new cc.LabelTTF('score: ' , 'Arial', 32);
-    this._scoreLabel.setPosition(cc.winSize.width / 2, cc.winSize.height - this._scoreLabel.height);
-    this._scoreLabel.setColor(cc.color.RED);
+    this._scoreLabel = new cc.LabelTTF('' + score , 'Arial', 128);
+    this._scoreLabel.setPosition(size.width / 2, cc.winSize.height / 2);
+    this._scoreLabel.setColor(cc.color.WHITE);
     this.addChild(this._scoreLabel, 10);
 
+    // 菜单
+    var againLabel = new cc.LabelTTF('再玩一次', 'Arial', 48);
+    var againMenuItem = new cc.MenuItemLabel(againLabel, function(){
+        var scene = new PlayScene();
+        cc.director.runScene(scene);
+    }, this);
 
+    var menu = new cc.Menu(againMenuItem);
+    this.addChild(menu);
+    menu.setPosition(size.width / 2, size.height / 3);
+    menu.alignItemsHorizontallyWithPadding(30);
+    
     return true;
   }
 
@@ -24,10 +33,14 @@ var GameoverLayer = cc.Layer.extend({
 });
 
 var GameoverScene = cc.Scene.extend({
-  onEnter: function() {
-    cc.log('bb');
+  _score: 0,
+  ctor: function(score){
     this._super();
-    var layer = new GameoverLayer();
+    this._score = score;
+  },
+  onEnter: function() {
+    this._super();
+    var layer = new GameoverLayer(this._score);
     this.addChild(layer);
   }
 });

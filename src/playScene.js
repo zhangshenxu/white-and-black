@@ -122,7 +122,6 @@ var PlayLayer = cc.Layer.extend({
     this._tileLayer.runAction(action);
     this._speed++;
 
-    // TODO 判断最下面的没有按过的黑块的位置，判断gameover
     var lastLineTiles = this._tiles[this._count+1];
     for (var i = 0; i < this._col ; i++) {
       if(lastLineTiles[i]._type == TileType.TOUCH){
