@@ -59,7 +59,7 @@ var StartLayer = cc.Layer.extend({
           return false;
         }
         cc.log('click ');
-        cc.director.runScene(new PlayScene());
+        cc.director.runScene(new PlayScene(true));
         return true;
       }
     });
@@ -67,8 +67,8 @@ var StartLayer = cc.Layer.extend({
   
     var rightAction = cc.moveBy(0.5, cc.p(20, 0));
     var leftAction = cc.moveBy(0.5, cc.p(-20, 0));
-    rightAction.easing(cc.easeIn(2.0));
-    leftAction.easing(cc.easeIn(2.0));
+    //rightAction.easing(cc.easeIn(2.0));
+    //leftAction.easing(cc.easeIn(2.0));
     var moveAction = cc.sequence(rightAction, leftAction);
     var rep = new cc.RepeatForever(moveAction);
     this._startBtnSprite.runAction(rep);

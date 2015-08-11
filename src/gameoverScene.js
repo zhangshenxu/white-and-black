@@ -17,7 +17,7 @@ var GameoverLayer = cc.Layer.extend({
     // 菜单
     var againLabel = new cc.LabelTTF('再玩一次', 'Arial', 48);
     var againMenuItem = new cc.MenuItemLabel(againLabel, function(){
-        var scene = new PlayScene();
+        var scene = new PlayScene(false);
         cc.director.runScene(scene);
     }, this);
 

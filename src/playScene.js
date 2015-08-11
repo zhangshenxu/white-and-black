@@ -17,46 +17,22 @@ var PlayLayer = cc.Layer.extend({
 
   _bannerSprite: null,
   _startTileSprite: null,
-  _popSprite: null,
-  ctor: function() {
+
+  _isFirstTime: true,
+  ctor: function(isFirstTime) {
     this._super();
-    this.loadInit();
+    this._isFirstTime = isFirstTime;
+    this.loadInit(this._isFirstTime);
+    this.addNextLineListener();
     return true;
   },
-  loadInit: function() {
+  loadInit: function(isFirstTime) {
     var size = cc.winSize;
-
-    // 弹框图
-    this._popSprite = new cc.Sprite(res.pop_png);
-    this._popSprite.attr({
-      x: size.width / 2,
-      y: size.height / 2,
-    });
-    this.addChild(this._popSprite, 100);
-
-    var listener = cc.EventListener.create({
-      event: cc.EventListener.TOUCH_ONE_BY_ONE,
-      swallowtouches: true,
-      onTouchBegan: function(touch, event){
-        var target = event.getCurrentTarget();
-        var locationInNode = target.convertToNodeSpace(touch.getLocation());
-        var size = target.getContentSize();
-        var rect = cc.rect(0, 0, size.width, size.height);
-        if (!cc.rectContainsPoint(rect, locationInNode)) {
-          return false;
-        }
-        cc.log('click ');
-        
-        return true;
-      },
-      onTouchEnded: function(touch, event) {
-        var target = event.getCurrentTarget();
-        target.parent.addNextLineListener();
-        target.removeFromParent();
-      }
-    });
-    cc.eventManager.addListener(listener, this._popSprite);
-
+    if(isFirstTime){
+      var maskLayer = new MaskLayer();
+      this.addChild(maskLayer, 100);
+    }
+    
     // banner图
     this._bannerSprite = new cc.Sprite(res.banner_png);
     this._bannerSprite.attr({
@@ -239,9 +215,14 @@ var PlayLayer = cc.Layer.extend({
 });
 
 var PlayScene = cc.Scene.extend({
+  _isFirstTime: true,
+  ctor: function(isFirstTime){
+    this._super();
+    this._isFirstTime = isFirstTime;
+  },
   onEnter: function() {
     this._super();
-    var layer = new PlayLayer();
+    var layer = new PlayLayer(this._isFirstTime);
     this.addChild(layer);
   }
 });
