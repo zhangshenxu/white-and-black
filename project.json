@@ -14,6 +14,7 @@
     "src/resource.js",
     "src/playScene.js",
     "src/gameoverScene.js",
-    "src/tileSprite.js"
+    "src/tileSprite.js",
+    "src/startScene.js"
   ]
 }

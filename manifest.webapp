@@ -1,7 +1,7 @@
 {
   "version": "1.0",
-  "name": "HelloJavascript",
-  "description": "HelloJavascript",
+  "name": "牛郎快跑",
+  "description": "牛郎快跑－别踩白块儿",
   "launch_path": "/index.html",
   "icons": {
     "128": "/res/icon.png"

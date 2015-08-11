@@ -76,7 +76,7 @@ var TileSprite = cc.Sprite.extend({
       this.addChild(subTile);
       subTile.setPosition(this.width / 2, this.height / 2);
       subTile.setTextureRect(cc.rect(0, 0, this.width, this.height));
-      subTile.color = cc.color('#f05654');
+      subTile.color = cc.color('#ff7999');
       subTile.runAction(touchAction);
 
       var unschedule = this.parent.parent;
@@ -88,7 +88,7 @@ var TileSprite = cc.Sprite.extend({
       //subTile.setPosition(this.width / 2, this.height / 2);
       //subTile.setTextureRect(cc.rect(0, 0, this.width, this.height));
       //subTile.color = cc.color.GRAY;
-      this.color = cc.color.GRAY;
+      this.color = cc.color('#d2d2d2');
       this._isTouched = true;
       var isGameOver = false;
       this._callBackFunc(isGameOver);

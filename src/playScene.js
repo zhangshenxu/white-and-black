@@ -11,30 +11,73 @@ var PlayLayer = cc.Layer.extend({
 
   _speed: 1000,
   _isMoveing: false,
-  _count:0,
+  _count: 0,
 
+  _bannerSprite: null,
+  _startTileSprite: null,
+  _popSprite: null,
   ctor: function() {
     this._super();
     this.loadInit();
     return true;
   },
   loadInit: function() {
+    var size = cc.winSize;
+
+    // 弹框图
+    this._popSprite = new cc.Sprite(res.pop_png);
+    this._popSprite.attr({
+      x: size.width / 2,
+      y: size.height / 2,
+    });
+    this.addChild(this._popSprite, 100);
+
+    var listener = cc.EventListener.create({
+      event: cc.EventListener.TOUCH_ONE_BY_ONE,
+      swallowtouches: true,
+      onTouchBegan: function(touch, event){
+        var target = event.getCurrentTarget();
+        var locationInNode = target.convertToNodeSpace(touch.getLocation());
+        var size = target.getContentSize();
+        var rect = cc.rect(0, 0, size.width, size.height);
+        if (!cc.rectContainsPoint(rect, locationInNode)) {
+          return false;
+        }
+        cc.log('click ');
+        target.parent.addNextLineListener();
+        return true;
+      },
+      onTouchEnded: function(touch, event) {
+        var target = event.getCurrentTarget();
+        target.removeFromParent();
+      }
+    });
+    cc.eventManager.addListener(listener, this._popSprite);
+
+    // banner图
+    this._bannerSprite = new cc.Sprite(res.banner_png);
+    this._bannerSprite.attr({
+      x: size.width / 2,
+      y: size.height - 45,
+    });
+    this.addChild(this._bannerSprite, 5);
+
     // 初始化黑白块数组
     this._tiles = new Array();
 
     // 初始化黑白块大小
-    var width  = (cc.winSize.width - 1 * this._col ) / this._col;
-    var height = (cc.winSize.height - 1 * this._row ) / this._row;
+    var width  = (size.width - 2 * this._col ) / this._col;
+    var height = (size.height - 2 * this._row ) / this._row;
     this._tileSize = cc.size(width, height);
 
     // 添加黑白块层
     this._tileLayer = new cc.Layer();
-    this.addChild(this._tileLayer);
+    this.addChild(this._tileLayer, 0);
 
     // 添加分数label
-    this._scoreLabel = new cc.LabelTTF('score: ' + this._score, 'Arial', 32);
-    this._scoreLabel.setPosition(cc.winSize.width / 2, cc.winSize.height - this._scoreLabel.height);
-    this._scoreLabel.setColor(cc.color.RED);
+    this._scoreLabel = new cc.LabelTTF('00', 'Arial', 48);
+    this._scoreLabel.setPosition(size.width / 2, size.height - this._scoreLabel.height);
+    this._scoreLabel.setColor(cc.color('#ff7999'));
     this.addChild(this._scoreLabel, 10);
 
     // 添加初始黑白块
@@ -53,28 +96,26 @@ var PlayLayer = cc.Layer.extend({
         else if(num == j){
           type = TileType.TOUCH;
         }
-        var x = j * (this._tileSize.width + 1) + this._tileSize.width / 2;
-        var y = i * (this._tileSize.height + 1) + this._tileSize.height / 2;
+        var x = j * (this._tileSize.width + 2) + this._tileSize.width / 2;
+        var y = i * (this._tileSize.height + 2) + this._tileSize.height / 2;
         var tile = this.createTileSprite(x, y, type);
         this._tileLayer.addChild(tile);
         this._tiles[i].push(tile);
-
-        if (touchEnabled){
-          tile.loadListener();
-        }
       }
     }
+
     // 初始化开始图标
-    var startLabel = new cc.LabelTTF('开始', 'Arial', 64);
-    startLabel.setPosition(this._tileSize.width / 2, this._tileSize.height /2);
-    startLabel.setColor(cc.color.WHITE);
+    this._startTileSprite = new cc.Sprite(res.start_tile_png);
+    this._startTileSprite.attr({
+      x: this._tileSize.width / 2,
+      y: this._tileSize.height /2,
+    });
     for(var i = 0; i < this._col; i++){
       if(this._tiles[1][i]._type == TileType.TOUCH){
-        this._tiles[1][i].addChild(startLabel,100);
+        this._tiles[1][i].addChild(this._startTileSprite, 10);
         return;
       }
     }
-
   },
   createTileSprite: function(x, y, type) {
     var tile = new TileSprite(this._tileSize, this.onTileCallBack);
@@ -99,7 +140,12 @@ var PlayLayer = cc.Layer.extend({
       self.addNextLineListener();
       // 更新分数
       self._score++;
-      self._scoreLabel.setString('score: ' + self._score);
+      if(self._score < 10){
+        self._scoreLabel.setString('0' + self._score);
+      }
+      else{
+        self._scoreLabel.setString('' + self._score);
+      }
     }
   },
   addNextLineListener: function() {
@@ -116,8 +162,8 @@ var PlayLayer = cc.Layer.extend({
       if(num == i){
         type = TileType.TOUCH;
       }
-      var x = i * (this._tileSize.width + 1 ) + this._tileSize.width / 2;
-      var y = (this._tiles.length - 1) * (this._tileSize.height + 1) + this._tileSize.height / 2;
+      var x = i * (this._tileSize.width + 2 ) + this._tileSize.width / 2;
+      var y = (this._tiles.length - 1) * (this._tileSize.height + 2) + this._tileSize.height / 2;
       
       var tile = this.createTileSprite(x, y, type);
       this._tileLayer.addChild(tile);
@@ -139,6 +185,9 @@ var PlayLayer = cc.Layer.extend({
         if(!lastLineTiles[i]._isTouched && y.y < - this._tileSize.height / 2){
           this.unscheduleUpdate();
           this.gameOver();
+
+
+          
 /*          // TODO 特效
           var self = this;
           var callFun = cc.callFunc(function(){
@@ -156,13 +205,8 @@ var PlayLayer = cc.Layer.extend({
           subTile.color = cc.color.GRAY;
           subTile.runAction(blinkAction);
 
-          
           var deadAction = cc.sequence(popAction, callFun);
           this._tileLayer.runAction(deadAction);*/
-         
-
-
-
         }
       }
     };

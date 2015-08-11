@@ -1,5 +1,11 @@
 var res = {
-  BackGround_png : "res/background.png",
+  start_bg_jpg : 'res/start-bg.jpg',
+  fonts_png : 'res/fonts.png',
+  zhinv_png : 'res/zhinv.png',
+  start_btn_png : 'res/start-btn.png',
+  banner_png : 'res/banner.png',
+  start_tile_png : 'res/start-tile.png',
+  pop_png : 'res/pop.png'
 };
 
 var g_resources = [];
