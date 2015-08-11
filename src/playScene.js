@@ -9,9 +9,11 @@ var PlayLayer = cc.Layer.extend({
   _row: 4,
   _col: 4,
 
-  _speed: 1000,
+  _speed: 8,
+  _time : 0,
   _isMoveing: false,
-  _count: 0,
+  _count: 1, // 需要添加监听事件在数组中的位置
+  _num: 0, // 已经点击的次数，用来确定添加新块在layer中的位置
 
   _bannerSprite: null,
   _startTileSprite: null,
@@ -44,11 +46,12 @@ var PlayLayer = cc.Layer.extend({
           return false;
         }
         cc.log('click ');
-        target.parent.addNextLineListener();
+        
         return true;
       },
       onTouchEnded: function(touch, event) {
         var target = event.getCurrentTarget();
+        target.parent.addNextLineListener();
         target.removeFromParent();
       }
     });
@@ -134,6 +137,7 @@ var PlayLayer = cc.Layer.extend({
         self._isMoveing = true;
       }
       // 增加新行
+      self._num++;
       self.addTile();
       // 下一行开始触摸
       self._count++;
@@ -150,7 +154,7 @@ var PlayLayer = cc.Layer.extend({
   },
   addNextLineListener: function() {
     for(var i = 0; i < this._col; i++){
-      this._tiles[this._count+1][i].loadListener();
+      this._tiles[this._count][i].loadListener();
       cc.log('add listener ok' );
     }
   },
@@ -163,7 +167,7 @@ var PlayLayer = cc.Layer.extend({
         type = TileType.TOUCH;
       }
       var x = i * (this._tileSize.width + 2 ) + this._tileSize.width / 2;
-      var y = (this._tiles.length - 1) * (this._tileSize.height + 2) + this._tileSize.height / 2;
+      var y = (this._num + 5) * (this._tileSize.height + 2) + this._tileSize.height / 2;
       
       var tile = this.createTileSprite(x, y, type);
       this._tileLayer.addChild(tile);
@@ -172,13 +176,31 @@ var PlayLayer = cc.Layer.extend({
   },
   update: function() {
     // 根据速度开始移动黑白块层
-    var speed = (-this._speed) / 100 ;
-    var action = cc.moveBy(0, cc.p(0, speed));
+    this._time++;
+    if(this._time > 200){
+      this._speed += 1;
+      this._time = 0;
+    }
+    var action = cc.moveBy(0, cc.p(0, -this._speed));
     this._tileLayer.runAction(action);
-    this._speed++;
+
+    // 删除数组
+    var pos = this._tiles[0][0].parent.convertToWorldSpace(this._tiles[0][0].getPosition());
+    if (pos.y < - this._tileSize.height / 2 - 100){
+
+      for(var i = 0; i < 4; i++){
+        this._tiles[0][i].removeFromParent();
+      }
+      this._tiles.splice(0,1);
+      this._count--;
+      cc.log('remove array');
+      cc.log(this._tiles);
+      cc.log(this._count);
+
+    }
 
     // 判断最下面的没有按过的黑块的位置，判断gameover
-    var lastLineTiles = this._tiles[this._count+1];
+    var lastLineTiles = this._tiles[this._count];
     for (var i = 0; i < this._col ; i++) {
       if(lastLineTiles[i]._type == TileType.TOUCH){
         var y = lastLineTiles[i].parent.convertToWorldSpace(lastLineTiles[i].getPosition());
@@ -186,8 +208,6 @@ var PlayLayer = cc.Layer.extend({
           this.unscheduleUpdate();
           this.gameOver();
 
-
-          
 /*          // TODO 特效
           var self = this;
           var callFun = cc.callFunc(function(){
