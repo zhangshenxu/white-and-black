@@ -9,7 +9,7 @@ var PlayLayer = cc.Layer.extend({
   _row: 4,
   _col: 4,
 
-  _speed: 8,
+  _speed: 10,
   _time : 0,
   _isMoveing: false,
   _count: 1, // 需要添加监听事件在数组中的位置

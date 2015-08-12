@@ -45,8 +45,9 @@ var TileSprite = cc.Sprite.extend({
   onTouchBegan: function(touch, event) {
     var target = event.getCurrentTarget();
     var locationInNode = target.convertToNodeSpace(touch.getLocation());
+    cc.log(locationInNode);
     var size = target.getContentSize();
-    var rect = cc.rect(0, 0, size.width, size.height);
+    var rect = cc.rect(0, -100, size.width, size.height+100);
     if (!cc.rectContainsPoint(rect, locationInNode)) {
         return false;
     }
