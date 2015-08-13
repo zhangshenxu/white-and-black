@@ -7,7 +7,17 @@ var res = {
   start_tile_png : 'res/start-tile.png',
   pop_png : 'res/pop.png',
   start_run_png : 'res/start-run.png',
-  close_png : 'res/close.png'
+  close_png : 'res/close.png',
+  gameover_bg_jpg : 'res/gameover-bg.jpg',
+  show_png : 'res/show.png',
+  playagain_png : 'res/playagain.png',
+  see77style_png : 'res/see77style.png',
+  share_png : 'res/share.png',
+  input_png : 'res/input.png',
+  transparent_png : 'res/transparent.png',
+  get_gift_png : 'res/get-gift.png',
+  yuanbao_png : 'res/yuanbao.png',
+  tips_png : 'res/tips.png'
 };
 
 var g_resources = [];

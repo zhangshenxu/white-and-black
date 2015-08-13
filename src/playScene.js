@@ -208,9 +208,26 @@ var PlayLayer = cc.Layer.extend({
     };
   },
   gameOver: function(){
-    var scene = new GameoverScene(this._score);
-    var transitionScene = new cc.TransitionSlideInR(0.5, scene);
-    cc.director.runScene(transitionScene);
+    var self = this;
+
+    var reg = new RegExp('(^|&)' + 'openid' + '=([^&]*)(&|$)');
+    var r = window.location.search.substr(1).match(reg);
+    if (r != null) {
+      //cc.log(r);
+      var openid = decodeURI(r[2]);
+      //cc.log(openid);
+    }else{
+      var openid = null;
+    }
+    
+    $.post('http://192.168.255.232:2333/qixi', {openid: openid, score : this._score}, function(data){
+      cc.log(data);
+      var scene = new GameoverScene(self._score, data.result, data.text, data.phone);
+      cc.director.runScene(scene);
+    });
+    //var scene = new GameoverScene(this._score);
+    //var transitionScene = new cc.TransitionSlideInR(0.5, scene);
+    //cc.director.runScene(transitionScene);
   }
 });
 
