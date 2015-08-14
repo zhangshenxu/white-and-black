@@ -4,7 +4,7 @@ var PlayLayer = cc.Layer.extend({
   _tileSize: cc.size(0, 0),
 
   _scoreLabel: null,
-  _score: 0,
+  _score: 20,
 
   _row: 4,
   _col: 4,
@@ -162,7 +162,7 @@ var PlayLayer = cc.Layer.extend({
 
     // 删除数组
     var pos = this._tiles[0][0].parent.convertToWorldSpace(this._tiles[0][0].getPosition());
-    if (pos.y < - this._tileSize.height / 2 - 100){
+    if (pos.y < - 2*(this._tileSize.height)){
 
       for(var i = 0; i < 4; i++){
         this._tiles[0][i].removeFromParent();
@@ -182,27 +182,25 @@ var PlayLayer = cc.Layer.extend({
         var y = lastLineTiles[i].parent.convertToWorldSpace(lastLineTiles[i].getPosition());
         if(!lastLineTiles[i]._isTouched && y.y < - this._tileSize.height / 2){
           this.unscheduleUpdate();
-          this.gameOver();
-
-/*          // TODO 特效
+          // 死亡特效
           var self = this;
           var callFun = cc.callFunc(function(){
             self.gameOver();
           });
 
-          var blinkAction = cc.blink(0.6, 4);
-          var popAction = cc.moveBy(1, cc.p(0, 2 * (this._tileSize.height + 1)));
-
+          var blinkAction = cc.blink(1, 4);
+          var popAction = cc.moveBy(0.5, cc.p(0, 2*(this._tileSize.height + 1)));
 
           var subTile = new cc.Sprite();
           lastLineTiles[i].addChild(subTile);
-          subTile.setPosition(this.width / 2, this.height / 2);
-          subTile.setTextureRect(cc.rect(0, 0, this.width, this.height));
-          subTile.color = cc.color.GRAY;
+          var tile = lastLineTiles[i];
+          subTile.setPosition(tile.width / 2, tile.height / 2);
+          subTile.setTextureRect(cc.rect(0, 0, tile.width, tile.height));
+          subTile.color = cc.color('#d2d2d2');
           subTile.runAction(blinkAction);
 
-          var deadAction = cc.sequence(popAction, callFun);
-          this._tileLayer.runAction(deadAction);*/
+          var deadAction = cc.sequence(popAction, cc.DelayTime.create(0.5), callFun);
+          this._tileLayer.runAction(deadAction);
         }
       }
     };

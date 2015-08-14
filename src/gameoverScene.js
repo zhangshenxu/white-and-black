@@ -2,6 +2,7 @@ var GameoverLayer = cc.Layer.extend({
   _bgSprite: null,
   _inputSprite: null,
   _yuanbaoSprite: null,
+  _yuanbaoSprite2: null,
   _phoneLabel: null,
   _notmeLabel: null,
   _draw: null,
@@ -149,12 +150,12 @@ var GameoverLayer = cc.Layer.extend({
     this._messageNoPhoneLabel.setColor(cc.color('#b25700'));
     this.addChild(this._messageNoPhoneLabel);
     // 元宝
-    this._yuanbaoSprite = new cc.Sprite(res.yuanbao_png);
-    this._yuanbaoSprite.attr({
+    this._yuanbaoSprite2 = new cc.Sprite(res.yuanbao_png);
+    this._yuanbaoSprite2.attr({
       x: size.width / 2,
       y: 780,
     });
-    this.addChild(this._yuanbaoSprite);
+    this.addChild(this._yuanbaoSprite2);
 
     var rightAction = new cc.RotateBy(0.5, -5);
     var leftAction = new cc.RotateBy(0.5, 5);
@@ -162,7 +163,7 @@ var GameoverLayer = cc.Layer.extend({
     //leftAction.easing(cc.easeIn(2.0));
     var moveAction = cc.sequence(rightAction, leftAction);
     var rep = new cc.RepeatForever(moveAction);
-    this._yuanbaoSprite.runAction(rep);
+    this._yuanbaoSprite2.runAction(rep);
   },
   closeWinPage: function() {
     this._yuanbaoSprite.removeFromParent();
@@ -173,7 +174,7 @@ var GameoverLayer = cc.Layer.extend({
     this._draw.removeFromParent();
   },
   closeNoPhoneWinPage: function() {
-    this._yuanbaoSprite.removeFromParent();
+    this._yuanbaoSprite2.removeFromParent();
     this._menuNoPhone.removeFromParent();
     this._messageNoPhoneLabel.removeFromParent();
     this._textField.removeFromParent();
