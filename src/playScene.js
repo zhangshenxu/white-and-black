@@ -19,6 +19,8 @@ var PlayLayer = cc.Layer.extend({
   _startTileSprite: null,
 
   _isFirstTime: true,
+
+  _openid: '1111',
   ctor: function(isFirstTime) {
     this._super();
     this._isFirstTime = isFirstTime;
@@ -207,25 +209,34 @@ var PlayLayer = cc.Layer.extend({
   },
   gameOver: function(){
     var self = this;
-
-    var reg = new RegExp('(^|&)' + 'openid' + '=([^&]*)(&|$)');
+    var code = '';
+    var reg = new RegExp('(^|&)' + 'code' + '=([^&]*)(&|$)');
     var r = window.location.search.substr(1).match(reg);
     if (r != null) {
       //cc.log(r);
-      var openid = decodeURI(r[2]);
+      code = decodeURI(r[2]);
       //cc.log(openid);
     }else{
-      var openid = null;
+      code = null;
     }
-    
-    $.post('http://192.168.255.232:2333/qixi', {openid: openid, score : this._score}, function(data){
-      cc.log(data);
-      var scene = new GameoverScene(self._score, data.result, data.text, data.phone);
-      cc.director.runScene(scene);
+
+    $.ajax({
+      url: 'http://testapi.dudumeijia.com/activities/qixi/score',
+      method: 'POST',
+      data: {
+        openid: this._openid,
+        code: code,
+        score: this._score
+      },
+      success: function(data) {
+        self._openid = data.openid;
+        var scene = new GameoverScene(self._score, data.openid, data.result, data.phone);
+        cc.director.runScene(scene);
+      },
+      error: function() {
+
+      },
     });
-    //var scene = new GameoverScene(this._score);
-    //var transitionScene = new cc.TransitionSlideInR(0.5, scene);
-    //cc.director.runScene(transitionScene);
   }
 });
 

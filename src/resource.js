@@ -16,8 +16,7 @@ var res = {
   input_png : 'res/input.png',
   transparent_png : 'res/transparent.png',
   get_gift_png : 'res/get-gift.png',
-  yuanbao_png : 'res/yuanbao.png',
-  tips_png : 'res/tips.png'
+  yuanbao_png : 'res/yuanbao.png'
 };
 
 var g_resources = [];

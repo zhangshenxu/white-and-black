@@ -46,6 +46,39 @@
  }
  *
  */
+var wechat = function(debug) {
+  reqwest({
+    url: 'http://activityapi.dudumeijia.com/weixin/jsconfig',
+    method: 'post',
+    data: {
+      url: location.href.split('#')[0],
+    },
+  }).then(function(res){
+    res.debug = debug;
+    wx.config(res);
+  });
+}
+
+var sharing = function(config) {
+ console.log('wx.sharing', wx);
+  if (wx) {
+    wx.ready(function(){
+      console.log('wx.ready')
+      wx.onMenuShareTimeline(config);
+      wx.onMenuShareAppMessage(config);
+      wx.onMenuShareQQ(config);
+    });
+  }
+}
+var sharingConfig ={
+  title: '奔跑吧牛郎，迎娶织女走上人生巅峰！',
+  desc: '据说全世界只有7%的人能跑过77步，不服来战！更有神秘大红包在等你！',
+  link: 'http://dudumeijia.com/static/games/qixi',
+  imgUrl: 'http://dudumeijia.com/static/games/qixi/icon.png',
+}
+wechat(true);
+sharing(sharingConfig);
+
 
 cc.game.onStart = function(){
   cc.view.adjustViewPort(true);
