@@ -71,6 +71,7 @@ var TileSprite = cc.Sprite.extend({
       (self._callBackFunc && typeof(self._callBackFunc) === "function") && self._callBackFunc(isGameOver);
     });
     if(this._type == TileType.DONT_TOUCH){
+      cc.audioEngine.playEffect(res.dead_mp3);
       var isGameOver = true;
       var touchAction = cc.sequence(cc.blink(0.6, 4), callFun);
       var subTile = new cc.Sprite();
@@ -88,6 +89,7 @@ var TileSprite = cc.Sprite.extend({
       //this.addChild(subTile);
       //subTile.setPosition(this.width / 2, this.height / 2);
       //subTile.setTextureRect(cc.rect(0, 0, this.width, this.height));
+      cc.audioEngine.playEffect(res.piano_mp3);
       //subTile.color = cc.color.GRAY;
       this.color = cc.color('#d2d2d2');
       this._isTouched = true;

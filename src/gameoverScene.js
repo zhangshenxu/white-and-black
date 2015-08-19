@@ -155,9 +155,15 @@ var GameoverLayer = cc.Layer.extend({
     var menuItem = new cc.MenuItemSprite(getGiftSprite, getGiftSprite2, function(){
       //cc.log(this._textField.string);
       this._phone = this._textField.string;
-      this.closeNoPhoneWinPage();
-      //this.showHaveGetGift();
-      this.getGift(this._openid, this._phone);
+      cc.log(this._phone);
+      if(this._phone){
+        this.closeNoPhoneWinPage();
+        //this.showHaveGetGift();
+        this.getGift(this._openid, this._phone);
+      }else{
+        alert('请输入手机号～');
+      }
+
     },this);
     this._menuNoPhone = new cc.Menu(menuItem);
     this._menuNoPhone.setPosition(size.width / 2, 310);

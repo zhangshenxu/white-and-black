@@ -184,6 +184,7 @@ var PlayLayer = cc.Layer.extend({
         var y = lastLineTiles[i].parent.convertToWorldSpace(lastLineTiles[i].getPosition());
         if(!lastLineTiles[i]._isTouched && y.y < - this._tileSize.height / 2){
           this.unscheduleUpdate();
+          cc.audioEngine.playEffect(res.dead_mp3);
           // 死亡特效
           var self = this;
           var callFun = cc.callFunc(function(){
